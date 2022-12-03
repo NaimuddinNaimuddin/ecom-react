@@ -5,6 +5,8 @@ import { Link, useNavigate } from "react-router-dom"
 
 function GetProducts() {
     const navigate = useNavigate()
+    const rights = JSON.parse(localStorage.getItem('rights'))[0]?.permissions
+    console.log(rights, "9")
     const [data, setData] = useState([])
     const [deleteData, setDeleteData] = useState([])
 
@@ -22,6 +24,7 @@ function GetProducts() {
                 console.log(err)
             })
     }, [refresh])
+
 
     const handleDelete = () => {
         const data = deleteData
@@ -85,18 +88,19 @@ function GetProducts() {
                             <div style={{ color: 'green', marginLeft: "4px" }}>
                                 By {item.seller} </div>
                             <div style={{ marginLeft: "4px" }}> PRICE : {item.price} Only/- </div>
-                            <button onClick={() => {
+
+                            {rights.indexOf('edit-product') !== -1 && <button onClick={() => {
                                 console.log(item._id, "40")
                                 navigate(`/get/product/${item._id}`)
-                            }}>EDIT</button>
-                            <input onChange={(e) => {
-                                console.log(e.target.checked, "48")
+                            }}>EDIT</button>}
+
+                            {rights.indexOf('delete-products') !== -1 && <input onChange={(e) => {
                                 if (e.target.checked === true) {
                                     setDeleteData([...deleteData, item._id])
                                 } else {
                                     setDeleteData(deleteData.filter(s => s !== item._id))
                                 }
-                            }} type="checkbox" />
+                            }} type="checkbox" />}
                             <button onClick={() => handleAddToCart(item._id)
                             } > ADD TO CART  </button>
                         </div>

@@ -36,6 +36,7 @@ function Signup() {
         }}>
             <div>
                 <h1> Signup PAGE</h1>
+                <div> <Link to="/login"> LOGIN </Link> </div>
                 USERNAME -
                 <input type="text" value={userName} onChange={(e) => {
                     setUserName(e.target.value)
