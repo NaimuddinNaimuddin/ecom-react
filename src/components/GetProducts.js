@@ -16,7 +16,8 @@ function GetProducts() {
 
     console.log(data, "8")
     useEffect(() => {
-        axios.get('http://localhost:3001/get-products')
+        const headers = { Authorization: localStorage.getItem('token') }
+        axios.get('http://localhost:3001/get-products', { headers })
             .then(res => {
                 setData(res.data.data)
             })
@@ -47,7 +48,8 @@ function GetProducts() {
 
         console.log({ productId: _productId, userId })
         const _data = { productId: _productId, userId }
-        axios.post('http://localhost:3001/add-to-cart', _data)
+        const headers = { Authorization: localStorage.getItem('token') }
+        axios.post('http://localhost:3001/add-to-cart', _data, { headers })
             .then(res => {
                 console.log(res.data, "49")
                 if (res.data.code == 200) {

@@ -10,7 +10,8 @@ function UserCart() {
 
     useEffect(() => {
         const data = { userId: localStorage.getItem('userId') }
-        axios.post('http://localhost:3001/get-user-cart', data)
+        const headers = { Authorization: localStorage.getItem('token') }
+        axios.post('http://localhost:3001/get-user-cart', data, { headers })
             .then(res => {
                 console.log(res.data, "15")
                 setData(res.data.data.cart)
@@ -19,6 +20,45 @@ function UserCart() {
                 console.log(err)
             })
     }, [])
+
+    const handleOpenRazorpay = (data) => {
+
+        const options = {
+            key: 'rzp_test_9e9h7K87g5yKdi',
+            amount: Number(data.amount),
+            currency: data.currency,
+            order_id: data.id,
+            name: 'SHOPPING APP',//
+            description: 'XYZ',//
+            handler: function (response) {
+                console.log(response, "34")
+                axios.post('http://localhost:3001/verify', { response: response })
+                    .then(res => {
+                        console.log(res, "37")
+                        // your orders
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+            }
+
+        }
+        const rzp = new window.Razorpay(options)
+        rzp.open()
+
+    }
+
+    const handlePayment = (amount) => {
+        const _data = { amount: amount }
+        axios.post('http://localhost:3001/orders', _data)
+            .then(res => {
+                console.log(res.data, "29")
+                handleOpenRazorpay(res.data.data)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
 
     return (
         <div>
@@ -46,6 +86,7 @@ function UserCart() {
                         <p>{item.name} in {item.category}</p>
                         <p>  By {item.seller} </p>
                         <p> PRICE : {item.price} Only/- </p>
+                        <button onClick={() => handlePayment(item.price)}> PAY NOW </button>
                     </div>
                 })}
             </div>
